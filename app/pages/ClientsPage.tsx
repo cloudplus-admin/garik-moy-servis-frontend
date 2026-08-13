@@ -1,0 +1,6 @@
+const number=(value:string)=>Number(value.replace(/\D/g,""))||0;
+
+export function ClientsPage({rows,canCreate,onSales,onDebts}:{rows:string[][];canCreate:boolean;onSales:(filter:string)=>void;onDebts:()=>void}){
+ const debit=rows.reduce((sum,row)=>sum+number(row[3]),0);
+ return <><div className="kpis counterparty-kpis"><button className="card kpi" onClick={onDebts}><small>Дебит - нам должны</small><strong>{debit.toLocaleString("ru-RU")} сум</strong><span>Открыть панель задолженностей</span></button><div className="card kpi"><small>Контрагенты</small><strong>{rows.length}</strong><span>Покупатели и партнеры</span></div></div><div className="toolbar"><span className="count">{rows.length} контрагентов</span><span className="spacer"/>{canCreate&&<button className="primary">Новый контрагент</button>}</div><div className="split">{rows.map(c=><button className="card debt-card interactive-client" key={c[0]} onClick={()=>onSales(c[0])}><div className="debt-head"><span className="company-logo">{c[0].split(" ").map(x=>x[0]).slice(0,2).join("")}</span><div><h3>{c[0]}</h3><p>{c[1]} · Ответственный: {c[5]}</p></div><div className="debt-amount"><strong>{c[3]} сум</strong><small>{c[3]==="0"?"Нет дебита":`до ${c[4]}`}</small></div></div><span className="open-hint">Открыть историю продаж</span></button>)}</div></>
+}
