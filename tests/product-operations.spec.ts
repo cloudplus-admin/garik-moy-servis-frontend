@@ -9,7 +9,7 @@ test.beforeEach(async({page})=>{
   if(url.includes("/api/products"))return route.fulfill(json([{sku:"RTL-1",name:"Масло",brand:"Ravenol",package:"4 л",quantity:"12",reserved:"0",price:"100",status:"В наличии"},{sku:"RTL-2",name:"Антифриз",brand:"Meguin",package:"5 л",quantity:"4",reserved:"1",price:"250",status:"Мало"}]));
   if(url.includes("/api/batches"))return route.fulfill(json([{batchNumber:"RTL-B-OLD",product:{sku:"RTL-1",name:"Масло"},supplier:"GARIK IMPORT",warehouse:"Магазин Сергели",arrivedAt:"2026-07-01T00:00:00Z",initialQuantity:10,availableQuantity:4},{batchNumber:"RTL-B-NEW",product:{sku:"RTL-1",name:"Масло"},supplier:"GARIK IMPORT",warehouse:"Магазин Сергели",arrivedAt:"2026-08-01T00:00:00Z",initialQuantity:10,availableQuantity:8}]));
   if(url.includes("/api/sales"))return route.fulfill(json([{number:"RTL-01429",date:"12.08.2026",customer:"SERGELI MOTORS",store:"Магазин Сергели",warehouse:"Магазин Сергели",amount:"12 700 000",paymentStatus:"В долг"}]));
-  if(url.includes("/api/movements"))return route.fulfill(json([]));
+  if(url.includes("/api/movements"))return route.fulfill(json([{number:"STOCK-7",operation:"Оприходование",source:"Начальный остаток",destination:"Магазин Сергели",date:"01.08.2026 09:00",status:"Проведен",productSku:"RTL-1",productName:"Масло",batchNumber:"RTL-B-OLD",quantity:12}]));
   if(url.includes("/api/clients"))return route.fulfill(json([{name:"SERGELI MOTORS",type:"Опт",creditLimit:"1",debt:"2",dueDate:"15.08.2026",manager:"Бекзод"}]));
   if(url.includes("/api/debts"))return route.fulfill(json([{customer:"SERGELI MOTORS",store:"Магазин Сергели",direction:"Розница",amount:"2",dueDate:"15.08.2026",manager:"Бекзод",saleId:29,status:"Ожидается"}]));
   return route.fulfill(json([]));
@@ -32,12 +32,18 @@ test("мегавкладка показывает FIFO и продажи по м
  const rows=page.locator("tbody tr"); await expect(rows).toHaveCount(2); await expect(rows.first()).toContainText("RTL-B-OLD");
  await page.getByRole("tab",{name:"Продажи"}).click();
  const saleRow=page.getByRole("row").filter({hasText:"RTL-01429"});
- await expect(saleRow.getByRole("cell",{name:"Магазин Сергели"})).toHaveCount(2);
+ await expect(saleRow.getByRole("cell",{name:"Магазин Сергели"})).toHaveCount(1);
 });
 
 test("клиент открывает продажи с готовым фильтром",async({page})=>{
  await page.goto("/"); await page.getByRole("button",{name:"Клиенты"}).click(); await page.getByRole("button",{name:/SERGELI MOTORS/}).click();
  await expect(page.getByRole("tab",{name:"Продажи"})).toHaveAttribute("aria-selected","true"); await expect(page.getByLabel("Фильтр товаров и операций")).toHaveValue("SERGELI MOTORS"); await expect(page.getByText("RTL-01429")).toBeVisible();
+});
+
+test("структурный фильтр склада не скрывает найденное движение",async({page})=>{
+ await page.goto("/products?tab=movements&sku=RTL-1&warehouse=%D0%9C%D0%B0%D0%B3%D0%B0%D0%B7%D0%B8%D0%BD%20%D0%A1%D0%B5%D1%80%D0%B3%D0%B5%D0%BB%D0%B8");
+ await expect(page.getByText("STOCK-7")).toBeVisible();
+ await expect(page.getByLabel("Фильтр товаров и операций")).toHaveValue("");
 });
 
 for(const width of [390,768,1280,1440]){

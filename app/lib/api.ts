@@ -7,7 +7,7 @@ type Entity=Record<string,unknown>;
 const text=(row:Entity,key:string)=>String(row[key]??"");
 const rowMappers:Partial<Record<Page,(row:Entity)=>string[]>>={
   warehouses:r=>[text(r,"name"),text(r,"type"),text(r,"quantity"),text(r,"value"),text(r,"capacity")],
-  products:r=>[text(r,"sku"),text(r,"name"),text(r,"brand"),text(r,"package"),text(r,"quantity"),text(r,"reserved"),text(r,"price"),text(r,"status")],
+  products:r=>[text(r,"sku"),text(r,"name"),text(r,"brand"),text(r,"package"),text(r,"quantity"),text(r,"reserved"),text(r,"price"),text(r,"retailPrice"),text(r,"status")],
   movements:r=>[text(r,"number"),text(r,"operation"),text(r,"source"),text(r,"destination"),text(r,"date"),text(r,"status")],
   sales:r=>[text(r,"number"),text(r,"date"),text(r,"customer"),text(r,"store")||text(r,"warehouse"),text(r,"warehouse"),text(r,"amount"),text(r,"paymentStatus")],
   clients:r=>[text(r,"name"),text(r,"type"),text(r,"creditLimit"),text(r,"debt"),text(r,"dueDate"),text(r,"manager")],

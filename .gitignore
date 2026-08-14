@@ -4,6 +4,3 @@ playwright-report/
 test-results/
 screenshots/
 *.tsbuildinfo
-.env
-.env.local
-.env.*.local
