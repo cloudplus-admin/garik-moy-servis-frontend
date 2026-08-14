@@ -1,1 +1,2 @@
-export {default} from "../AppShell";
+import AppShell from "../AppShell";
+export default function FinanceRoute(){return <AppShell section="finance"/>}

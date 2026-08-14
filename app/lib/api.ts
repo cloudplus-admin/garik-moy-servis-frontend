@@ -1,4 +1,4 @@
-import type {BusinessData,Company,Page,PageData} from "./types";
+import type {ApplicationConfiguration,BusinessData,Company,Page,PageData} from "./types";
 
 export const API_URL=process.env.NEXT_PUBLIC_API_URL??"";
 const cache=new Map<string,PageData>();
@@ -32,3 +32,9 @@ export async function loadPage(page:Page,company:Company,signal?:AbortSignal,ref
 }
 
 export function invalidatePage(page:Page,company:Company){cache.delete(`${page}:${company}`)}
+
+export async function loadApplicationConfiguration(signal?:AbortSignal):Promise<ApplicationConfiguration>{
+  const response=await fetch(`${API_URL}/api/application-configuration`,{signal,cache:"no-store"});
+  if(!response.ok)throw new Error(`API ${response.status}`);
+  return response.json();
+}
