@@ -1,4 +1,4 @@
-import type {BusinessData,Company,Page,PageData} from "./types";
+import type {ApplicationConfiguration,BusinessData,Company,Page,PageData} from "./types";
 
 export const API_URL=process.env.NEXT_PUBLIC_API_URL??"";
 const cache=new Map<string,PageData>();
@@ -6,9 +6,9 @@ const cache=new Map<string,PageData>();
 type Entity=Record<string,unknown>;
 const text=(row:Entity,key:string)=>String(row[key]??"");
 const rowMappers:Partial<Record<Page,(row:Entity)=>string[]>>={
-  warehouses:r=>[text(r,"name"),text(r,"type"),text(r,"quantity"),text(r,"value"),text(r,"capacity")],
-  products:r=>[text(r,"sku"),text(r,"name"),text(r,"brand"),text(r,"package"),text(r,"quantity"),text(r,"reserved"),text(r,"price"),text(r,"retailPrice"),text(r,"status")],
-  movements:r=>[text(r,"number"),text(r,"operation"),text(r,"source"),text(r,"destination"),text(r,"date"),text(r,"status")],
+  warehouses:r=>[text(r,"name"),text(r,"type"),text(r,"quantity"),text(r,"value"),text(r,"capacity"),text(r,"capacityTotal"),text(r,"capacityUsed"),text(r,"warehouseNote")],
+  products:r=>[text(r,"sku"),text(r,"name"),text(r,"brand"),text(r,"package"),text(r,"quantity"),text(r,"reserved"),text(r,"price"),text(r,"retailPrice"),text(r,"status"),text(r,"id")],
+  movements:r=>[text(r,"number"),text(r,"operation"),text(r,"source"),text(r,"destination"),text(r,"quantity"),text(r,"date"),text(r,"status")],
   sales:r=>[text(r,"number"),text(r,"date"),text(r,"customer"),text(r,"store")||text(r,"warehouse"),text(r,"warehouse"),text(r,"amount"),text(r,"paymentStatus")],
   clients:r=>[text(r,"name"),text(r,"type"),text(r,"creditLimit"),text(r,"debt"),text(r,"dueDate"),text(r,"manager")],
   debts:r=>[text(r,"customer"),text(r,"store"),text(r,"direction"),text(r,"amount"),text(r,"dueDate"),text(r,"manager"),text(r,"saleId"),text(r,"status"),text(r,"kind")||"receivable",text(r,"comment"),text(r,"businessId"),text(r,"id")],
@@ -32,3 +32,9 @@ export async function loadPage(page:Page,company:Company,signal?:AbortSignal,ref
 }
 
 export function invalidatePage(page:Page,company:Company){cache.delete(`${page}:${company}`)}
+
+export async function loadApplicationConfiguration(signal?:AbortSignal):Promise<ApplicationConfiguration>{
+  const response=await fetch(`${API_URL}/api/application-configuration`,{signal,cache:"no-store"});
+  if(!response.ok)throw new Error(`API ${response.status}`);
+  return response.json();
+}

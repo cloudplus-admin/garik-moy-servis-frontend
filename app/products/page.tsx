@@ -1,1 +1,2 @@
-export {default} from "../AppShell";
+import AppShell from "../AppShell";
+export default function ProductsRoute(){return <AppShell section="products"/>}

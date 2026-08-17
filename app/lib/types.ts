@@ -3,3 +3,7 @@ export type Company = "all"|"import"|"retail";
 export type BusinessData = {hero:string[];kpi:string[];products:string[][];clients:string[][];movements:string[][];warehouses:string[][];sales:string[][];debts:string[][];cash:string[][];staff:string[]};
 export type SalesTrendPoint = {label:string;amount:number};
 export type PageData = BusinessData|string[]|string[][];
+export type PageConfiguration={pageKey:Page;title:string;subtitle:string;sortOrder:number};
+export type ObserverProfile={id:number;name:string;role:"Руководитель"|"Бухгалтер"|"Продавец"|"Кладовщик";company:Company;title:string;employeeId:number};
+export type BusinessOption={id:number;code:"import"|"retail";name:string;summary:string};
+export type ApplicationConfiguration={pages:PageConfiguration[];businesses:BusinessOption[];observers:ObserverProfile[]};

@@ -7,7 +7,7 @@ test("склад открывает окно остатков, товары фи
  await page.getByRole("button",{name:/Центральный склад импорта/}).click();
  await expect(page.getByRole("dialog")).toContainText("Ravenol VMP 5W-30");
  await page.getByRole("button",{name:"Закрыть склад"}).click();
- await page.getByRole("button",{name:/Товары и остатки/}).click();
+ await page.getByRole("button",{name:/Товары и операции/}).click();
  await page.getByLabel("Фильтр товаров").fill("Liqui Moly");
  await expect(page.getByRole("row",{name:/Liqui Moly/})).toHaveCount(2);
  await expect(page.getByRole("row",{name:/Ravenol/})).toHaveCount(0);
